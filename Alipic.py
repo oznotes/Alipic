@@ -1,4 +1,4 @@
-from os import listdir, path
+from os import listdir, path, remove
 from os.path import isfile, join
 
 from PIL import Image
@@ -68,12 +68,23 @@ def GetMeThePictures(mypath):
 
 if __name__ == '__main__':
 
+    # Get the out_folder files and clean before starting
+    GetTheOutFolder = GetMeThePictures(out_folder)
+    for eachPicOutFolder in GetTheOutFolder:
+        if path.exists(path.join(out_folder, eachPicOutFolder)):
+            remove(path.join(out_folder, eachPicOutFolder))
+            print ("Removed :" + path.join(out_folder, eachPicOutFolder))
+
     # Get the original files.
     TheOriginalPictures = GetMeThePictures(picture_folder)
 
     # Resize the Original files.
     for each_picture in TheOriginalPictures:
         ResizeOriginal(each_picture)
+        if path.exists(path.join(picture_folder, each_picture)):
+            # Clean Up
+            remove(path.join(picture_folder, each_picture))
+            print ("Removed :" + path.join(picture_folder, each_picture))
 
     # Work on Resized images and add watermark
     TheResizedPictures = GetMeThePictures(resize)
@@ -82,5 +93,9 @@ if __name__ == '__main__':
         img = path.join(resize, eachResizedPicture)
         out_img = path.join(out_folder, eachResizedPicture)
         watermark_it(img, out_img, watermark_img, position=(0, 0))
+        if path.exists(path.join(resize, eachResizedPicture)):
+            # Clean Up
+            remove(path.join(resize, eachResizedPicture))
+            print ("Removed :" + path.join(resize, eachResizedPicture))
 
     print ("Done")
